@@ -14,11 +14,6 @@ The easiest way to work with these charts is using the included DevContainer:
    - Open this folder in VS Code
    - Click the blue "Dev Container" button in the bottom-left corner (or use `F1` > "Dev Containers: Reopen in Container")
 
-3. **Download Charts:**
-   ```bash
-   just update
-   ```
-
 ## Download/Update Charts
 
 ```bash
