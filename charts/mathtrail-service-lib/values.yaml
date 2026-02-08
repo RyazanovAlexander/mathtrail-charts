@@ -1,0 +1,157 @@
+# =======================================================================
+# mathtrail-service-lib :: values.yaml
+# Default values for the library chart.
+# The consuming microservice MUST override at least:
+#   image.repository, image.tag, resources.requests, resources.limits
+# =======================================================================
+
+# -- Replica count (ignored when autoscaling.enabled=true)
+replicaCount: 1
+
+# -- Container image
+image:
+  # repository: ""  # REQUIRED — validated via fail()
+  repository: ""
+  pullPolicy: IfNotPresent
+  # tag: ""  # Falls back to .Chart.AppVersion if not set
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# -- ServiceAccount
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+# -- Pod annotations and labels
+podAnnotations: {}
+podLabels: {}
+
+# -- Pod Security Context (pod-level)
+podSecurityContext:
+  runAsNonRoot: true
+  fsGroup: null
+  runAsUser: null
+  runAsGroup: null
+
+# -- Container Security Context
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: null
+
+# -- Service
+service:
+  type: ClusterIP
+  port: 8080
+  annotations: {}
+
+# -- Dapr Sidecar integration
+dapr:
+  enabled: true
+  appId: ""          # Defaults to fullname
+  appProtocol: ""    # http | grpc
+  logLevel: ""       # debug | info | warn | error
+
+# -- Probe contract (Startup / Liveness / Readiness)
+# If the developer does not specify paths, default values are applied.
+probes:
+  startup:
+    path: /health/startup
+    initialDelaySeconds: 0
+    periodSeconds: 5
+    failureThreshold: 30
+    timeoutSeconds: 3
+  liveness:
+    path: /health/liveness
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    failureThreshold: 3
+    timeoutSeconds: 3
+  readiness:
+    path: /health/ready
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    failureThreshold: 3
+    timeoutSeconds: 3
+
+# -- Resources (MANDATORY — validated via fail())
+# Without requests the Kubernetes scheduler cannot place the pod.
+# Without limits a single greedy microservice can crash the entire node.
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+# -- Migration Job (runs BEFORE the deployment)
+migration:
+  enabled: false
+  command: ["./migrate"]
+  args: []
+  env: []
+  envFrom: []
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 300
+  restartPolicy: OnFailure
+  waitImage: "bitnami/kubectl:latest"
+  waitTimeout: "120s"
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+# -- ConfigMap for environment variables
+configMap:
+  enabled: false
+  data: {}
+    # DATABASE_HOST: "postgres"
+    # LOG_LEVEL: "info"
+
+# -- Additional environment variables (env)
+env: []
+  # - name: MY_VAR
+  #   value: "my-value"
+
+# -- Additional envFrom (secretRef, configMapRef)
+envFrom: []
+  # - secretRef:
+  #     name: my-secret
+
+# -- Graceful shutdown: delay before SIGTERM (seconds)
+preStopDelaySec: 5
+
+# -- Termination grace period (seconds)
+terminationGracePeriodSeconds: 30
+
+# -- Default Anti-Affinity: spreads replicas across different nodes
+defaultAntiAffinity:
+  enabled: true
+
+# -- Additional Affinity rules
+affinity: {}
+
+nodeSelector: {}
+tolerations: []
+
+# -- Additional volumes / volumeMounts
+volumes: []
+volumeMounts: []
+
+# -- HPA / Autoscaling
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 0

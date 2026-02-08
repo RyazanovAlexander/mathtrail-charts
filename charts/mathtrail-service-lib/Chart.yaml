@@ -1,0 +1,9 @@
+apiVersion: v2
+name: mathtrail-service-lib
+description: |
+  Library Helm Chart for MathTrail microservices.
+  Provides reusable templates.
+
+type: library
+
+version: 0.1.0
