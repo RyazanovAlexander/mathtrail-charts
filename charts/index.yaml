@@ -3,7 +3,7 @@ entries:
   dapr:
   - apiVersion: v2
     appVersion: 1.16.8
-    created: "2026-02-07T19:13:55.6365206-06:00"
+    created: "2026-02-08T04:42:55.84754218Z"
     dependencies:
     - name: dapr_rbac
       repository: file://dapr_rbac
@@ -36,7 +36,7 @@ entries:
   k6-operator:
   - apiVersion: v1
     appVersion: 1.2.0
-    created: "2026-02-07T19:13:55.6431986-06:00"
+    created: "2026-02-08T04:42:55.860374934Z"
     description: A Helm chart to install the k6-operator
     digest: 59092761e2fdd26c4069a87b3953b1963be5a6d369b91d09a0f092e37b22be17
     home: https://k6.io
@@ -58,6 +58,17 @@ entries:
     urls:
     - https://RyazanovAlexander.github.io/mathtrail-charts/charts/k6-operator-4.2.0.tgz
     version: 4.2.0
+  mathtrail-service-lib:
+  - apiVersion: v2
+    created: "2026-02-08T04:42:55.869161424Z"
+    description: 'Library Helm Chart for MathTrail microservices. Provides reusable
+      templates. '
+    digest: 12adaa0d4c4c1dd1deca1112b6a25c153476d88eef613c18fdb72092d85fc242
+    name: mathtrail-service-lib
+    type: library
+    urls:
+    - https://RyazanovAlexander.github.io/mathtrail-charts/charts/mathtrail-service-lib-0.1.0.tgz
+    version: 0.1.0
   postgresql:
   - annotations:
       fips: "true"
@@ -75,7 +86,7 @@ entries:
       tanzuCategory: service
     apiVersion: v2
     appVersion: 18.1.0
-    created: "2026-02-07T19:13:55.6665161-06:00"
+    created: "2026-02-08T04:42:55.890308204Z"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -127,7 +138,7 @@ entries:
       tanzuCategory: service
     apiVersion: v2
     appVersion: 8.4.0
-    created: "2026-02-07T19:13:55.6893892-06:00"
+    created: "2026-02-08T04:42:55.915337534Z"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -156,7 +167,7 @@ entries:
   strimzi-kafka-operator:
   - apiVersion: v2
     appVersion: 0.50.0
-    created: "2026-02-07T19:13:55.7177639-06:00"
+    created: "2026-02-08T04:42:55.94645938Z"
     description: 'Strimzi: Apache Kafka running on Kubernetes'
     digest: 3dff5a4947584f4d124a701f28df180f7dd6a8bf4c963f7f375fdb28527059af
     home: https://strimzi.io/
@@ -179,4 +190,4 @@ entries:
     urls:
     - https://RyazanovAlexander.github.io/mathtrail-charts/charts/strimzi-kafka-operator-helm-3-chart-0.50.0.tgz
     version: 0.50.0
-generated: "2026-02-07T19:13:55.6157193-06:00"
+generated: "2026-02-08T04:42:55.834938014Z"

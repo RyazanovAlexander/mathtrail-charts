@@ -33,6 +33,9 @@ update:
     echo "📥 Pulling k6 Operator chart..."
     helm pull grafana/k6-operator --destination ./charts
     
+    echo "📦 Packaging mathtrail-service-lib library chart..."
+    helm package ./charts/mathtrail-service-lib --destination ./charts
+
     echo "📦 Generating Helm repo index..."
     helm repo index ./charts --url {{ repo_url }}/charts
     
