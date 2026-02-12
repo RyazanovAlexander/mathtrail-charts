@@ -12,7 +12,7 @@ metadata:
   name: {{ include "mathtrail-service-lib.fullname" . }}
   labels:
     {{- include "mathtrail-service-lib.labels" . | nindent 4 }}
-  {{- with (dig "service" "annotations" dict .Values) }}
+  {{- with (dig "service" "annotations" nil .Values) }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}

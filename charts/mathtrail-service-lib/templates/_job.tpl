@@ -43,7 +43,7 @@ spec:
           imagePullPolicy: {{ dig "image" "pullPolicy" "IfNotPresent" .Values }}
           command:
             {{- toYaml (dig "migration" "command" (list "./migrate") .Values) | nindent 12 }}
-          {{- with (dig "migration" "args" list .Values) }}
+          {{- with (dig "migration" "args" nil .Values) }}
           args:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -52,11 +52,11 @@ spec:
             - configMapRef:
                 name: {{ include "mathtrail-service-lib.fullname" . }}-env
             {{- end }}
-          {{- with (dig "migration" "env" list .Values) }}
+          {{- with (dig "migration" "env" nil .Values) }}
           env:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with (dig "migration" "envFrom" list .Values) }}
+          {{- with (dig "migration" "envFrom" nil .Values) }}
           envFrom:
             {{- toYaml . | nindent 12 }}
           {{- end }}

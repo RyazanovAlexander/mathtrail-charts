@@ -6,13 +6,12 @@
     - Dapr Sidecar integration
     - Mandatory probe contract (Startup/Liveness/Readiness)
     - Security Context
-    - Resource Requests & Limits (mandatory, validated)
+    - Resource Requests & Limits
     - Graceful Shutdown (preStop hook)
 =======================================================================
 */}}
 
 {{- define "mathtrail-service-lib.deployment" -}}
-{{ include "mathtrail-service-lib.validateResources" . }}
 {{ include "mathtrail-service-lib.validateImage" . }}
 apiVersion: apps/v1
 kind: Deployment
@@ -122,7 +121,7 @@ spec:
             failureThreshold: {{ dig "probes" "readiness" "failureThreshold" 3 .Values }}
             timeoutSeconds: {{ dig "probes" "readiness" "timeoutSeconds" 3 .Values }}
 
-          {{/* ---- Resources (mandatory) ---- */}}
+          {{/* ---- Resources ---- */}}
           resources:
             requests:
               cpu: {{ dig "resources" "requests" "cpu" "100m" .Values }}

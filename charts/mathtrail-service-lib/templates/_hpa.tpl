@@ -21,21 +21,21 @@ spec:
   minReplicas: {{ dig "autoscaling" "minReplicas" 1 .Values }}
   maxReplicas: {{ dig "autoscaling" "maxReplicas" 10 .Values }}
   metrics:
-    {{- with (dig "autoscaling" "targetCPUUtilizationPercentage" 0 .Values) }}
+    {{- if (dig "autoscaling" "targetCPUUtilizationPercentage" nil .Values) }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ . }}
+          averageUtilization: {{ dig "autoscaling" "targetCPUUtilizationPercentage" 80 .Values }}
     {{- end }}
-    {{- with (dig "autoscaling" "targetMemoryUtilizationPercentage" 0 .Values) }}
+    {{- if (dig "autoscaling" "targetMemoryUtilizationPercentage" nil .Values) }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ . }}
+          averageUtilization: {{ dig "autoscaling" "targetMemoryUtilizationPercentage" 80 .Values }}
     {{- end }}
 {{- end }}
 {{- end -}}

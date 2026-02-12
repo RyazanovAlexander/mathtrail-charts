@@ -74,9 +74,9 @@ Create the name of the service account to use.
 Dapr annotations — always injected when dapr.enabled is true.
 */}}
 {{- define "mathtrail-service-lib.daprAnnotations" -}}
-{{- if (dig "dapr" "enabled" false .Values) }}
+{{- if (dig "dapr" "enabled" true .Values) }}
 dapr.io/enabled: "true"
-dapr.io/app-id: {{ dig "dapr" "appId" (include "mathtrail-service-lib.fullname" .) .Values }}
+dapr.io/app-id: {{ dig "dapr" "appId" "" .Values | default (include "mathtrail-service-lib.fullname" .) }}
 dapr.io/app-port: {{ dig "service" "port" 8080 .Values | quote }}
 {{- with (dig "dapr" "appProtocol" "" .Values) }}
 dapr.io/app-protocol: {{ . | quote }}
@@ -85,14 +85,6 @@ dapr.io/app-protocol: {{ . | quote }}
 dapr.io/log-level: {{ . | quote }}
 {{- end }}
 {{- end }}
-{{- end }}
-
-{{/*
-Validate that required resources are set.
-Using the fail function is the best way to enforce quality.
-*/}}
-{{- define "mathtrail-service-lib.validateResources" -}}
-{{/* Resources have safe defaults via dig — validation is informational only */}}
 {{- end }}
 
 {{/*
