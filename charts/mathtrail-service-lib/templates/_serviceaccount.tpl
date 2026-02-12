@@ -6,17 +6,17 @@
 */}}
 
 {{- define "mathtrail-service-lib.serviceAccount" -}}
-{{- if .Values.serviceAccount.create }}
+{{- if (dig "serviceAccount" "create" true .Values) }}
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: {{ include "mathtrail-service-lib.serviceAccountName" . }}
   labels:
     {{- include "mathtrail-service-lib.labels" . | nindent 4 }}
-  {{- with .Values.serviceAccount.annotations }}
+  {{- with (dig "serviceAccount" "annotations" dict .Values) }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
-automountServiceAccountToken: {{ .Values.serviceAccount.automount | default true }}
+automountServiceAccountToken: {{ dig "serviceAccount" "automount" true .Values }}
 {{- end }}
 {{- end -}}

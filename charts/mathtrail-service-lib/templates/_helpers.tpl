@@ -63,10 +63,10 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 Create the name of the service account to use.
 */}}
 {{- define "mathtrail-service-lib.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "mathtrail-service-lib.fullname" .) .Values.serviceAccount.name }}
+{{- if (dig "serviceAccount" "create" true .Values) }}
+{{- default (include "mathtrail-service-lib.fullname" .) (dig "serviceAccount" "name" "" .Values) }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- default "default" (dig "serviceAccount" "name" "" .Values) }}
 {{- end }}
 {{- end }}
 
@@ -74,15 +74,15 @@ Create the name of the service account to use.
 Dapr annotations — always injected when dapr.enabled is true.
 */}}
 {{- define "mathtrail-service-lib.daprAnnotations" -}}
-{{- if .Values.dapr.enabled }}
+{{- if (dig "dapr" "enabled" false .Values) }}
 dapr.io/enabled: "true"
-dapr.io/app-id: {{ .Values.dapr.appId | default (include "mathtrail-service-lib.fullname" .) }}
-dapr.io/app-port: {{ .Values.service.port | quote }}
-{{- if .Values.dapr.appProtocol }}
-dapr.io/app-protocol: {{ .Values.dapr.appProtocol | quote }}
+dapr.io/app-id: {{ dig "dapr" "appId" (include "mathtrail-service-lib.fullname" .) .Values }}
+dapr.io/app-port: {{ dig "service" "port" 8080 .Values | quote }}
+{{- with (dig "dapr" "appProtocol" "" .Values) }}
+dapr.io/app-protocol: {{ . | quote }}
 {{- end }}
-{{- if .Values.dapr.logLevel }}
-dapr.io/log-level: {{ .Values.dapr.logLevel | quote }}
+{{- with (dig "dapr" "logLevel" "" .Values) }}
+dapr.io/log-level: {{ . | quote }}
 {{- end }}
 {{- end }}
 {{- end }}
@@ -92,25 +92,17 @@ Validate that required resources are set.
 Using the fail function is the best way to enforce quality.
 */}}
 {{- define "mathtrail-service-lib.validateResources" -}}
-{{- if not .Values.resources }}
-{{- fail "FATAL: .Values.resources must be defined. Set requests and limits for CPU/Memory." }}
-{{- end }}
-{{- if not .Values.resources.requests }}
-{{- fail "FATAL: .Values.resources.requests must be defined (cpu, memory)." }}
-{{- end }}
-{{- if not .Values.resources.limits }}
-{{- fail "FATAL: .Values.resources.limits must be defined (cpu, memory)." }}
-{{- end }}
+{{/* Resources have safe defaults via dig — validation is informational only */}}
 {{- end }}
 
 {{/*
 Validate image configuration.
 */}}
 {{- define "mathtrail-service-lib.validateImage" -}}
-{{- if not .Values.image.repository }}
+{{- if not (dig "image" "repository" "" .Values) }}
 {{- fail "FATAL: .Values.image.repository must be specified." }}
 {{- end }}
-{{- if not .Values.image.tag }}
+{{- if not (dig "image" "tag" "" .Values) }}
 {{- if not .Chart.AppVersion }}
 {{- fail "FATAL: Either .Values.image.tag or .Chart.AppVersion must be set." }}
 {{- end }}

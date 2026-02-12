@@ -6,7 +6,7 @@
 */}}
 
 {{- define "mathtrail-service-lib.configMap" -}}
-{{- if .Values.configMap.enabled }}
+{{- if (dig "configMap" "enabled" false .Values) }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -14,7 +14,7 @@ metadata:
   labels:
     {{- include "mathtrail-service-lib.labels" . | nindent 4 }}
 data:
-  {{- range $key, $value := .Values.configMap.data }}
+  {{- range $key, $value := (dig "configMap" "data" dict .Values) }}
   {{ $key }}: {{ $value | quote }}
   {{- end }}
 {{- end }}

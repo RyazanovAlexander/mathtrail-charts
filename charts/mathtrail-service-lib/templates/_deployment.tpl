@@ -21,7 +21,7 @@ metadata:
   labels:
     {{- include "mathtrail-service-lib.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
+  {{- if not (dig "autoscaling" "enabled" false .Values) }}
   replicas: {{ .Values.replicaCount | default 1 }}
   {{- end }}
   strategy:
@@ -52,26 +52,26 @@ spec:
       serviceAccountName: {{ include "mathtrail-service-lib.serviceAccountName" . }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds | default 30 }}
       securityContext:
-        runAsNonRoot: {{ .Values.podSecurityContext.runAsNonRoot | default true }}
-        {{- if .Values.podSecurityContext.fsGroup }}
-        fsGroup: {{ .Values.podSecurityContext.fsGroup }}
+        runAsNonRoot: {{ dig "podSecurityContext" "runAsNonRoot" true .Values }}
+        {{- with (dig "podSecurityContext" "fsGroup" nil .Values) }}
+        fsGroup: {{ . }}
         {{- end }}
-        {{- if .Values.podSecurityContext.runAsUser }}
-        runAsUser: {{ .Values.podSecurityContext.runAsUser }}
+        {{- with (dig "podSecurityContext" "runAsUser" nil .Values) }}
+        runAsUser: {{ . }}
         {{- end }}
-        {{- if .Values.podSecurityContext.runAsGroup }}
-        runAsGroup: {{ .Values.podSecurityContext.runAsGroup }}
+        {{- with (dig "podSecurityContext" "runAsGroup" nil .Values) }}
+        runAsGroup: {{ . }}
         {{- end }}
 
       {{/* Init container: wait for migration completion */}}
-      {{- if .Values.migration.enabled }}
+      {{- if (dig "migration" "enabled" false .Values) }}
       initContainers:
         - name: wait-for-migration
-          image: {{ .Values.migration.waitImage | default "bitnami/kubectl:latest" }}
+          image: {{ dig "migration" "waitImage" "bitnami/kubectl:latest" .Values }}
           command:
             - "/bin/sh"
             - "-c"
-            - "kubectl wait --for=condition=complete job/{{ include "mathtrail-service-lib.fullname" . }}-migrate --timeout={{ .Values.migration.waitTimeout | default "120s" }}"
+            - "kubectl wait --for=condition=complete job/{{ include "mathtrail-service-lib.fullname" . }}-migrate --timeout={{ dig "migration" "waitTimeout" "120s" .Values }}"
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -88,56 +88,56 @@ spec:
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ dig "image" "pullPolicy" "IfNotPresent" .Values }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ dig "service" "port" 8080 .Values }}
               protocol: TCP
 
           {{/* ---- Probe contract ---- */}}
           startupProbe:
             httpGet:
-              path: {{ .Values.probes.startup.path | default "/health/startup" }}
+              path: {{ dig "probes" "startup" "path" "/health/startup" .Values }}
               port: http
-            initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds | default 0 }}
-            periodSeconds: {{ .Values.probes.startup.periodSeconds | default 5 }}
-            failureThreshold: {{ .Values.probes.startup.failureThreshold | default 30 }}
-            timeoutSeconds: {{ .Values.probes.startup.timeoutSeconds | default 3 }}
+            initialDelaySeconds: {{ dig "probes" "startup" "initialDelaySeconds" 0 .Values }}
+            periodSeconds: {{ dig "probes" "startup" "periodSeconds" 5 .Values }}
+            failureThreshold: {{ dig "probes" "startup" "failureThreshold" 30 .Values }}
+            timeoutSeconds: {{ dig "probes" "startup" "timeoutSeconds" 3 .Values }}
 
           livenessProbe:
             httpGet:
-              path: {{ .Values.probes.liveness.path | default "/health/liveness" }}
+              path: {{ dig "probes" "liveness" "path" "/health/liveness" .Values }}
               port: http
-            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds | default 0 }}
-            periodSeconds: {{ .Values.probes.liveness.periodSeconds | default 10 }}
-            failureThreshold: {{ .Values.probes.liveness.failureThreshold | default 3 }}
-            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds | default 3 }}
+            initialDelaySeconds: {{ dig "probes" "liveness" "initialDelaySeconds" 0 .Values }}
+            periodSeconds: {{ dig "probes" "liveness" "periodSeconds" 10 .Values }}
+            failureThreshold: {{ dig "probes" "liveness" "failureThreshold" 3 .Values }}
+            timeoutSeconds: {{ dig "probes" "liveness" "timeoutSeconds" 3 .Values }}
 
           readinessProbe:
             httpGet:
-              path: {{ .Values.probes.readiness.path | default "/health/ready" }}
+              path: {{ dig "probes" "readiness" "path" "/health/ready" .Values }}
               port: http
-            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds | default 0 }}
-            periodSeconds: {{ .Values.probes.readiness.periodSeconds | default 10 }}
-            failureThreshold: {{ .Values.probes.readiness.failureThreshold | default 3 }}
-            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds | default 3 }}
+            initialDelaySeconds: {{ dig "probes" "readiness" "initialDelaySeconds" 0 .Values }}
+            periodSeconds: {{ dig "probes" "readiness" "periodSeconds" 10 .Values }}
+            failureThreshold: {{ dig "probes" "readiness" "failureThreshold" 3 .Values }}
+            timeoutSeconds: {{ dig "probes" "readiness" "timeoutSeconds" 3 .Values }}
 
           {{/* ---- Resources (mandatory) ---- */}}
           resources:
             requests:
-              cpu: {{ .Values.resources.requests.cpu | default "100m" }}
-              memory: {{ .Values.resources.requests.memory | default "128Mi" }}
+              cpu: {{ dig "resources" "requests" "cpu" "100m" .Values }}
+              memory: {{ dig "resources" "requests" "memory" "128Mi" .Values }}
             limits:
-              cpu: {{ .Values.resources.limits.cpu | default "500m" }}
-              memory: {{ .Values.resources.limits.memory | default "512Mi" }}
+              cpu: {{ dig "resources" "limits" "cpu" "500m" .Values }}
+              memory: {{ dig "resources" "limits" "memory" "512Mi" .Values }}
 
           {{/* ---- Container Security Context ---- */}}
           securityContext:
             allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: {{ .Values.securityContext.readOnlyRootFilesystem | default true }}
-            runAsNonRoot: {{ .Values.securityContext.runAsNonRoot | default true }}
-            {{- if .Values.securityContext.runAsUser }}
-            runAsUser: {{ .Values.securityContext.runAsUser }}
+            readOnlyRootFilesystem: {{ dig "securityContext" "readOnlyRootFilesystem" true .Values }}
+            runAsNonRoot: {{ dig "securityContext" "runAsNonRoot" true .Values }}
+            {{- with (dig "securityContext" "runAsUser" nil .Values) }}
+            runAsUser: {{ . }}
             {{- end }}
             capabilities:
               drop:
@@ -163,9 +163,9 @@ spec:
             {{- toYaml . | nindent 12 }}
             {{- end }}
 
-          {{- if or .Values.configMap.enabled .Values.envFrom }}
+          {{- if or (dig "configMap" "enabled" false .Values) .Values.envFrom }}
           envFrom:
-            {{- if .Values.configMap.enabled }}
+            {{- if (dig "configMap" "enabled" false .Values) }}
             - configMapRef:
                 name: {{ include "mathtrail-service-lib.fullname" . }}-env
             {{- end }}
@@ -194,9 +194,9 @@ spec:
       {{- end }}
 
       {{/* ---- Affinity & Anti-Affinity ---- */}}
-      {{- if or .Values.affinity .Values.defaultAntiAffinity.enabled }}
+      {{- if or .Values.affinity (dig "defaultAntiAffinity" "enabled" true .Values) }}
       affinity:
-        {{- if .Values.defaultAntiAffinity.enabled }}
+        {{- if (dig "defaultAntiAffinity" "enabled" true .Values) }}
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - weight: 100
