@@ -12,14 +12,14 @@ metadata:
   name: {{ include "mathtrail-service-lib.fullname" . }}
   labels:
     {{- include "mathtrail-service-lib.labels" . | nindent 4 }}
-  {{- with .Values.service.annotations }}
+  {{- with (dig "service" "annotations" dict .Values) }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  type: {{ .Values.service.type | default "ClusterIP" }}
+  type: {{ dig "service" "type" "ClusterIP" .Values }}
   ports:
-    - port: {{ .Values.service.port }}
+    - port: {{ dig "service" "port" 8080 .Values }}
       targetPort: http
       protocol: TCP
       name: http
