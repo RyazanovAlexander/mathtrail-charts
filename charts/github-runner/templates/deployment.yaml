@@ -79,7 +79,7 @@ spec:
               protocol: TCP
           readinessProbe:
             exec:
-              command: ["buildctl", "debug", "workers"]
+              command: ["buildctl", "--addr", "tcp://localhost:{{ .Values.buildkit.port | default 1234 }}", "debug", "workers"]
             initialDelaySeconds: 5
             periodSeconds: 10
           resources:
