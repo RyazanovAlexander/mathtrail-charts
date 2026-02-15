@@ -9,7 +9,7 @@ entries:
       artifacthub.io/prerelease: "false"
     apiVersion: v2
     appVersion: 2.8.1
-    created: "2026-02-15T18:28:58.919283105Z"
+    created: "2026-02-15T22:50:19.019393059Z"
     description: Chaos Mesh is a cloud-native Chaos Engineering platform that orchestrates
       chaos on Kubernetes environments.
     digest: 27d3411c18c15eb55e40b4c5255a06d7a6f8d97b722f58faae0255fe5c894f4b
@@ -41,7 +41,7 @@ entries:
   dapr:
   - apiVersion: v2
     appVersion: 1.16.9
-    created: "2026-02-15T18:28:58.941623836Z"
+    created: "2026-02-15T22:50:19.043570518Z"
     dependencies:
     - name: dapr_rbac
       repository: file://dapr_rbac
@@ -74,19 +74,19 @@ entries:
   github-runner:
   - apiVersion: v2
     appVersion: latest
-    created: "2026-02-15T18:28:58.959325239Z"
+    created: "2026-02-15T22:50:19.059124541Z"
     description: GitHub Actions self-hosted runner for MathTrail CI/CD (BuildKit +
       Buildah)
-    digest: 359ca22e0a830a1d36eecbfb4e739ddc995cc6fb4c18c1b5b2a621dd9f1d61c9
+    digest: 78b4fc1a3b6363bebaac86d6ca87098d578da94e5e8792b183b40662dd06d9c4
     name: github-runner
     type: application
     urls:
-    - https://MathTrail.github.io/charts/charts/github-runner-0.2.2.tgz
-    version: 0.2.2
+    - https://MathTrail.github.io/charts/charts/github-runner-0.2.6.tgz
+    version: 0.2.6
   hydra:
   - apiVersion: v2
     appVersion: v25.4.0
-    created: "2026-02-15T18:28:58.978969928Z"
+    created: "2026-02-15T22:50:19.076155278Z"
     dependencies:
     - alias: ory
       name: ory-commons
@@ -124,7 +124,7 @@ entries:
   k6-operator:
   - apiVersion: v1
     appVersion: 1.2.0
-    created: "2026-02-15T18:28:58.993727206Z"
+    created: "2026-02-15T22:50:19.091156079Z"
     description: A Helm chart to install the k6-operator
     digest: 59092761e2fdd26c4069a87b3953b1963be5a6d369b91d09a0f092e37b22be17
     home: https://k6.io
@@ -149,7 +149,7 @@ entries:
   k8s-monitoring:
   - apiVersion: v2
     appVersion: 3.8.0
-    created: "2026-02-15T18:28:59.127163849Z"
+    created: "2026-02-15T22:50:19.251254552Z"
     dependencies:
     - alias: annotationAutodiscovery
       condition: annotationAutodiscovery.enabled
@@ -237,7 +237,7 @@ entries:
   keto:
   - apiVersion: v2
     appVersion: v25.4.0
-    created: "2026-02-15T18:28:59.139002501Z"
+    created: "2026-02-15T22:50:19.268167797Z"
     dependencies:
     - alias: ory
       name: ory-commons
@@ -269,7 +269,7 @@ entries:
   kratos:
   - apiVersion: v2
     appVersion: v25.4.0
-    created: "2026-02-15T18:28:59.150767154Z"
+    created: "2026-02-15T22:50:19.288476915Z"
     dependencies:
     - alias: ory
       name: ory-commons
@@ -285,10 +285,10 @@ entries:
     version: 0.60.1
   mathtrail-service-lib:
   - apiVersion: v2
-    created: "2026-02-15T18:28:59.159310315Z"
+    created: "2026-02-15T22:50:19.303171319Z"
     description: 'Library Helm Chart for MathTrail microservices. Provides reusable
       templates. '
-    digest: f80615ee114e2b14ff2b25b23dee09e5c7a4996b8fe1fed56ff8c1c8d9c3390b
+    digest: 084e3e11c79a130c8e6fd1c4c7e8447d9ff08022d0d048be3e63784183d59ba7
     name: mathtrail-service-lib
     type: library
     urls:
@@ -297,7 +297,7 @@ entries:
   oathkeeper:
   - apiVersion: v2
     appVersion: v25.4.0
-    created: "2026-02-15T18:28:59.172868648Z"
+    created: "2026-02-15T22:50:19.316642895Z"
     dependencies:
     - alias: oathkeeper-maester
       condition: maester.enabled
@@ -332,7 +332,7 @@ entries:
   opentelemetry-collector:
   - apiVersion: v2
     appVersion: 0.145.0
-    created: "2026-02-15T18:28:59.186989735Z"
+    created: "2026-02-15T22:50:19.333159941Z"
     description: OpenTelemetry Collector Helm chart for Kubernetes
     digest: 6fcc59ac0d48edf35122994a707929c97ad8c26baf4161b3ac5460adf163bac8
     home: https://opentelemetry.io/
@@ -366,7 +366,7 @@ entries:
       tanzuCategory: service
     apiVersion: v2
     appVersion: 18.2.0
-    created: "2026-02-15T18:28:59.209936257Z"
+    created: "2026-02-15T22:50:19.361590127Z"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -398,7 +398,7 @@ entries:
   pyroscope:
   - apiVersion: v2
     appVersion: 1.18.0
-    created: "2026-02-15T18:28:59.249834898Z"
+    created: "2026-02-15T22:50:19.400780402Z"
     dependencies:
     - alias: agent
       condition: agent.enabled
@@ -450,7 +450,7 @@ entries:
       tanzuCategory: service
     apiVersion: v2
     appVersion: 8.6.0
-    created: "2026-02-15T18:28:59.29215422Z"
+    created: "2026-02-15T22:50:19.438164431Z"
     dependencies:
     - name: common
       repository: oci://registry-1.docker.io/bitnamicharts
@@ -479,7 +479,7 @@ entries:
   strimzi-kafka-operator:
   - apiVersion: v2
     appVersion: 0.50.0
-    created: "2026-02-15T18:28:59.335217304Z"
+    created: "2026-02-15T22:50:19.506617706Z"
     description: 'Strimzi: Apache Kafka running on Kubernetes'
     digest: 3dff5a4947584f4d124a701f28df180f7dd6a8bf4c963f7f375fdb28527059af
     home: https://strimzi.io/
@@ -507,7 +507,7 @@ entries:
       artifacthub.io/license: Apache-2.0
     apiVersion: v2
     appVersion: 2.26.2
-    created: "2026-02-15T18:28:59.383813129Z"
+    created: "2026-02-15T22:50:19.585893391Z"
     description: A chart for deploying the server-side components of Telepresence
     digest: 92647e39e46a93891ac6bc11880a608eea0a3d052ca1bbd4199207ab92d52745
     icon: https://raw.githubusercontent.com/telepresenceio/telepresence.io/master/src/assets/images/telepresence-edgy.svg
@@ -522,4 +522,4 @@ entries:
     urls:
     - https://MathTrail.github.io/charts/charts/telepresence-oss-2.26.2.tgz
     version: 2.26.2
-generated: "2026-02-15T18:28:58.844439518Z"
+generated: "2026-02-15T22:50:18.943880876Z"
