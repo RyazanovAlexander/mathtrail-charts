@@ -52,7 +52,7 @@ update:
     pull_chart chaos-mesh chaos-mesh/chaos-mesh
 
     echo "📥 Pulling Development Tools..."
-    rm -f ./charts/telepresence-oss-*.tgz
+    rm -f ./charts/telepresence-*.tgz
     helm pull oci://ghcr.io/telepresenceio/telepresence-oss --destination ./charts
 
     echo "📦 Packaging mathtrail-service-lib library chart..."
