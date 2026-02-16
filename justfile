@@ -63,6 +63,10 @@ update:
     rm -f ./charts/github-runner-*.tgz
     helm package ./charts/github-runner --destination ./charts
 
+    echo "📦 Packaging k6-test-runner chart..."
+    rm -f ./charts/k6-test-runner-*.tgz
+    helm package ./charts/k6-test-runner --destination ./charts
+
     echo "📦 Generating Helm repo index..."
     helm repo index ./charts --url {{ repo_url }}/charts
     
