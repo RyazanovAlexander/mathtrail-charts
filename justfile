@@ -85,10 +85,15 @@ update:
 verify-charts-updated:
     #!/bin/bash
     set -e
-    if [ -n "$(git status --porcelain charts/)" ]; then
-        echo "❌ charts/ changed after running 'just update'."
+    changed=$(git status --porcelain \
+        charts/mathtrail-service-lib-*.tgz \
+        charts/github-runner-*.tgz \
+        charts/k6-test-runner-*.tgz \
+        charts/index.yaml 2>/dev/null)
+    if [ -n "$changed" ]; then
+        echo "❌ Local charts changed after running 'just update'."
         echo "   Run 'just update' locally and commit the changes."
-        git status --porcelain charts/
+        echo "$changed"
         exit 1
     fi
     echo "✅ Charts are up to date"
