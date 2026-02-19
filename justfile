@@ -85,15 +85,32 @@ update:
 verify-charts-updated:
     #!/bin/bash
     set -e
-    changed=$(git status --porcelain \
-        charts/mathtrail-service-lib-*.tgz \
-        charts/github-runner-*.tgz \
-        charts/k6-test-runner-*.tgz \
-        charts/index.yaml 2>/dev/null)
-    if [ -n "$changed" ]; then
-        echo "❌ Local charts changed after running 'just update'."
-        echo "   Run 'just update' locally and commit the changes."
-        echo "$changed"
-        exit 1
-    fi
-    echo "✅ Charts are up to date"
+    failed=0
+    for chart_dir in mathtrail-charts/*/; do
+        name=$(helm show chart "$chart_dir" | grep '^name:' | awk '{print $2}')
+        version=$(helm show chart "$chart_dir" | grep '^version:' | awk '{print $2}')
+        tgz="charts/${name}-${version}.tgz"
+
+        if [ ! -f "$tgz" ]; then
+            echo "❌ Missing: $tgz — run 'just update' and commit"
+            failed=1
+            continue
+        fi
+
+        # Compare contents of committed tgz vs freshly built tgz
+        committed=$(mktemp -d)
+        built=$(mktemp -d)
+
+        git show "HEAD:$tgz" 2>/dev/null | tar xz -C "$committed" || true
+        tar xz -f "$tgz" -C "$built"
+
+        if diff -r "$committed/$name" "$built/$name" > /dev/null 2>&1; then
+            echo "✅ $name-$version"
+        else
+            echo "❌ $name-$version: content changed but not committed — run 'just update' and commit"
+            diff -r "$committed/$name" "$built/$name" || true
+            failed=1
+        fi
+        rm -rf "$committed" "$built"
+    done
+    if [ $failed -ne 0 ]; then exit 1; fi
