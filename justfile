@@ -97,20 +97,17 @@ verify-charts-updated:
             continue
         fi
 
-        # Compare contents of committed tgz vs freshly built tgz
-        committed=$(mktemp -d)
-        built=$(mktemp -d)
+        # Extract tgz and compare against source directory
+        extracted=$(mktemp -d)
+        tar xzf "$tgz" -C "$extracted"
 
-        git show "HEAD:$tgz" 2>/dev/null | tar xz -C "$committed" || true
-        tar xz -f "$tgz" -C "$built"
-
-        if diff -r "$committed/$name" "$built/$name" > /dev/null 2>&1; then
+        if diff -r --strip-trailing-cr --exclude='Chart.yaml' --exclude='.helmignore' "$extracted/$name/" "$chart_dir" > /dev/null 2>&1; then
             echo "✅ $name-$version"
         else
-            echo "❌ $name-$version: content changed but not committed — run 'just update' and commit"
-            diff -r "$committed/$name" "$built/$name" || true
+            echo "❌ $name-$version: source differs from packaged chart — run 'just update' and commit"
+            diff -r --strip-trailing-cr --exclude='Chart.yaml' --exclude='.helmignore' "$extracted/$name/" "$chart_dir" || true
             failed=1
         fi
-        rm -rf "$committed" "$built"
+        rm -rf "$extracted"
     done
     if [ $failed -ne 0 ]; then exit 1; fi
