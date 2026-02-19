@@ -1,8 +1,7 @@
 #!/usr/bin/env just --justfile
 
 # The base URL where this Helm repo will be hosted (GitHub Pages)
-# Override with: just --set repo_url "https://..." update
-repo_url := "https://MathTrail.github.io/charts"
+repo_url := env_var("CHARTS_REPO_ROOT")
 
 # Update all Helm charts and regenerate the repo index
 update:
