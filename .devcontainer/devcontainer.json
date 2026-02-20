@@ -13,8 +13,7 @@
   },
 
   "remoteEnv": {
-    "HELM_EXPERIMENTAL_OCI": "1",
-    "BASH_ENV": "~/.env.shared"
+    "HELM_EXPERIMENTAL_OCI": "1"
   },
 
   "customizations": {
