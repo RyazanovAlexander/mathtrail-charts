@@ -1,6 +1,8 @@
 #!/usr/bin/env just --justfile
 
 set shell := ["bash", "-c"]
+set dotenv-load
+set dotenv-path := "/etc/mathtrail/platform.env"
 
 # The base URL where this Helm repo will be hosted (GitHub Pages)
 repo_url := env_var("CHARTS_REPO_ROOT")

@@ -1,6 +1,8 @@
 {
   "name": "MathTrail Helm Charts",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   
   "features": {
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1.2.2": {
@@ -8,8 +10,7 @@
       "version": "1.31.0",
       "minikube": "none"
     },
-    "ghcr.io/eitsupi/devcontainer-features/just:0.1.1": {},
-    "ghcr.io/prulloac/devcontainer-features/chezmoi:1": {}
+    "ghcr.io/eitsupi/devcontainer-features/just:0.1.1": {}
   },
 
   "remoteEnv": {
@@ -33,8 +34,6 @@
         }
       }
     }
-  },
-
-  "postStartCommand": "bash .devcontainer/post-start.sh"
+  }
 }
 

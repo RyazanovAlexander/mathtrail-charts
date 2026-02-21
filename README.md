@@ -11,11 +11,11 @@ helm repo update
 
 ### MathTrail Charts (local sources)
 
-| Chart | Version | Description |
-|-------|---------|-------------|
-| `mathtrail-service-lib` | 0.1.3 | Library chart — shared templates for all microservices |
-| `github-runner` | 0.2.8 | Self-hosted GitHub Actions runner (BuildKit + Buildah) |
-| `k6-test-runner` | 0.1.1 | Universal k6 load test runner |
+| Chart | Description |
+|-------|-------------|
+| `mathtrail-service-lib` | Library chart — shared templates for all microservices |
+| `github-runner` | Self-hosted GitHub Actions runner (BuildKit + Buildah) |
+| `k6-test-runner` | Universal k6 load test runner |
 
 ### Infrastructure Charts (pulled from upstream)
 
