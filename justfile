@@ -1,8 +1,11 @@
 #!/usr/bin/env just --justfile
 
+set shell := ["bash", "-c"]
+set dotenv-load
+set dotenv-path := "/etc/mathtrail/platform.env"
+
 # The base URL where this Helm repo will be hosted (GitHub Pages)
-# Override with: just --set repo_url "https://..." update
-repo_url := "https://MathTrail.github.io/charts"
+repo_url := env_var("CHARTS_REPO_ROOT")
 
 # Update all Helm charts and regenerate the repo index
 update:
@@ -20,6 +23,7 @@ update:
     helm repo add ory https://k8s.ory.sh/helm/charts 2>/dev/null || true
     helm repo add hashicorp https://helm.releases.hashicorp.com 2>/dev/null || true
     helm repo add external-secrets https://charts.external-secrets.io 2>/dev/null || true
+    helm repo add douban https://douban.github.io/charts/ 2>/dev/null || true
 
     helm repo update
 
@@ -56,6 +60,9 @@ update:
 
     echo "📥 Pulling Chaos Engineering..."
     pull_chart chaos-mesh chaos-mesh/chaos-mesh
+
+    echo "📥 Pulling Kafka Management..."
+    pull_chart kafka-ui douban/kafka-ui
 
     echo "📥 Pulling Development Tools..."
     rm -f ./charts/telepresence-*.tgz

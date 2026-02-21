@@ -1,6 +1,8 @@
 {
   "name": "MathTrail Helm Charts",
-  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
   
   "features": {
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1.2.2": {
