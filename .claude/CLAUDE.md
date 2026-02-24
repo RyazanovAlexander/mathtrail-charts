@@ -183,10 +183,18 @@ securityContext:
 
 ---
 
+## Secret Delivery (Platform Standard — NOT a library chart concern)
+
+Dapr Secret Store integration is implemented at the **platform level** (infra repo), not in service-lib:
+- `vault` Dapr component → KV v2 secrets (Redis passwords, API keys)
+- `vault-db` Dapr component → dynamic DB credentials
+
+**Service-lib does NOT need changes.** Services consume secrets in their own code via Dapr SDK
+or Dapr HTTP API. The library chart only provides ServiceAccount + RBAC (needed for Vault K8s auth).
+
 ## Planned Features
 
 - Prometheus annotations (automatic metrics scraping)
-- HashiCorp Vault / Dapr Secret Store integration
 - PodDisruptionBudget template
 - NetworkPolicy template
 - Support for additional sidecar containers
