@@ -83,6 +83,31 @@ autoscaling:
 dashboard:
   enabled: false
   folder: "MathTrail"
+vaultDbConfig:
+  enabled: false
+  image: "ghcr.io/bank-vaults/bank-vaults:v1.31.2"
+  waitImage: "busybox:1.36"
+  vaultAddr: "http://vault.vault.svc.cluster.local:8200"
+  vaultRole: "db-admin-role"
+  pgSecretName: "postgres-postgresql"
+  pgSecretKey: "postgres-password"
+  pgHost: "postgres-postgresql.mathtrail.svc.cluster.local"
+  pgPort: "5432"
+  pgUsername: "postgres"
+  connectionName: ""
+  pgDatabase: ""
+  roleName: ""
+  defaultTtl: "1h"
+  maxTtl: "24h"
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 300
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
 {{- end -}}
 
 {{/*
