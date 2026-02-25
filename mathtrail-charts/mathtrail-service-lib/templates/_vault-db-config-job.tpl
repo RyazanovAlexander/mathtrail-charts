@@ -143,7 +143,7 @@ spec:
               EOF
 
               # ── Step 3: Apply declaratively (idempotent) ──
-              bank-vaults configure --config-file /tmp/vault-config.yaml
+              bank-vaults configure --vault-config-file /tmp/vault-config.yaml
               echo "Done: ${CONN_NAME} + ${ROLE_NAME} configured."
           resources:
             {{- toYaml $v.vaultDbConfig.resources | nindent 12 }}
