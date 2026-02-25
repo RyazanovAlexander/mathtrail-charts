@@ -2,17 +2,17 @@
 =======================================================================
   mathtrail-service-lib :: _vault-db-config-job.tpl
   Vault Database Config Job — creates the DB connection + dynamic role
-  in Vault's Database Secrets Engine via `bank-vaults configure`.
+  in Vault's Database Secrets Engine via direct Vault HTTP API calls.
   Runs as a Helm pre-install/pre-upgrade hook BEFORE the migration Job.
 =======================================================================
 
   This Job:
   1. Waits for Vault to be ready (init container)
   2. Authenticates via Kubernetes auth (wget → Vault HTTP API)
-  3. Writes a declarative YAML config and runs `bank-vaults configure`
-     which idempotently applies database/config + database/roles.
+  3. Configures database/config/<connection> via Vault HTTP API (wget)
+  4. Configures database/roles/<role> via Vault HTTP API (wget)
 
-  SQL creation/revocation statements are inline in the YAML config.
+  Uses plain alpine (wget only) — no bank-vaults binary required.
   Vault placeholders ({{name}}, {{password}}, etc.) are Helm-escaped
   as {{ "{{name}}" }} so they survive template rendering as literals.
 */}}
@@ -103,7 +103,6 @@ spec:
             - -ec
             - |
               # ── Step 1: Authenticate to Vault via Kubernetes SA token ──
-              # wget (busybox) is available in the alpine-based bank-vaults image.
               # Parse client_token from the JSON response without requiring jq.
               VAULT_TOKEN=$(wget -qO- \
                 --header="Content-Type: application/json" \
@@ -113,37 +112,41 @@ spec:
               export VAULT_TOKEN
               echo "Authenticated to Vault as role=${VAULT_ROLE}"
 
-              # ── Step 2: Write declarative Vault database config ──
-              # ${VAR} — shell env vars expanded at runtime by the heredoc.
-              # {{ "{{username}}" }} etc. — Vault engine placeholders; Helm-escaped
-              # so they survive template rendering as literal {{"{{"}}{{"}}"}} strings.
-              cat > /tmp/vault-config.yaml << EOF
-              secrets:
-                - type: database
-                  path: database
-                  configuration:
-                    config:
-                      - name: "${CONN_NAME}"
-                        plugin_name: postgresql-database-plugin
-                        connection_url: "postgresql://{{ "{{username}}" }}:{{ "{{password}}" }}@${PG_HOST}:${PG_PORT}/${PG_DATABASE}?sslmode=disable"
-                        allowed_roles:
-                          - "${ROLE_NAME}"
-                        username: "${PG_USERNAME}"
-                        password: "${PG_PASSWORD}"
-                    roles:
-                      - name: "${ROLE_NAME}"
-                        db_name: "${CONN_NAME}"
-                        creation_statements: |
-                          CREATE ROLE "{{ "{{name}}" }}" WITH LOGIN PASSWORD '{{ "{{password}}" }}' VALID UNTIL '{{ "{{expiration}}" }}';
-                          GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO "{{ "{{name}}" }}";
-                          GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO "{{ "{{name}}" }}";
-                        revocation_statements: "DROP ROLE IF EXISTS {{ "{{name}}" }}"
-                        default_ttl: "${DEFAULT_TTL}"
-                        max_ttl: "${MAX_TTL}"
-              EOF
+              # ── Step 3: Configure database connection ──
+              # {{ "{{username}}" }} / {{ "{{password}}" }} — Vault engine placeholders;
+              # Helm-escaped so they survive template rendering as literal strings.
+              echo "Configuring database connection ${CONN_NAME}..."
+              HTTP_STATUS=$(wget -qO- \
+                --server-response \
+                --header="X-Vault-Token: ${VAULT_TOKEN}" \
+                --header="Content-Type: application/json" \
+                --post-data="{
+                  \"plugin_name\": \"postgresql-database-plugin\",
+                  \"connection_url\": \"postgresql://{{ "{{username}}" }}:{{ "{{password}}" }}@${PG_HOST}:${PG_PORT}/${PG_DATABASE}?sslmode=disable\",
+                  \"allowed_roles\": [\"${ROLE_NAME}\"],
+                  \"username\": \"${PG_USERNAME}\",
+                  \"password\": \"${PG_PASSWORD}\"
+                }" \
+                "${VAULT_ADDR}/v1/database/config/${CONN_NAME}" 2>&1 | grep "HTTP/" | tail -1 | awk '{print $2}')
+              echo "database/config status: ${HTTP_STATUS}"
 
-              # ── Step 3: Apply declaratively (idempotent) ──
-              bank-vaults configure --vault-config-file /tmp/vault-config.yaml
+              # ── Step 4: Configure dynamic role ──
+              echo "Configuring role ${ROLE_NAME}..."
+              HTTP_STATUS=$(wget -qO- \
+                --server-response \
+                --header="X-Vault-Token: ${VAULT_TOKEN}" \
+                --header="Content-Type: application/json" \
+                --post-data="{
+                  \"db_name\": \"${CONN_NAME}\",
+                  \"creation_statements\": [
+                    \"CREATE ROLE \\\"{{ "{{name}}" }}\\\" WITH LOGIN PASSWORD '{{ "{{password}}" }}' VALID UNTIL '{{ "{{expiration}}" }}'; GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO \\\"{{ "{{name}}" }}\\\"; GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO \\\"{{ "{{name}}" }}\\\";\"],
+                  \"revocation_statements\": [\"DROP ROLE IF EXISTS \\\"{{ "{{name}}" }}\\\"\"],
+                  \"default_ttl\": \"${DEFAULT_TTL}\",
+                  \"max_ttl\": \"${MAX_TTL}\"
+                }" \
+                "${VAULT_ADDR}/v1/database/roles/${ROLE_NAME}" 2>&1 | grep "HTTP/" | tail -1 | awk '{print $2}')
+              echo "database/roles status: ${HTTP_STATUS}"
+
               echo "Done: ${CONN_NAME} + ${ROLE_NAME} configured."
           resources:
             {{- toYaml $v.vaultDbConfig.resources | nindent 12 }}
