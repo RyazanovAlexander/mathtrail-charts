@@ -116,7 +116,7 @@ spec:
               # ── Step 2: Write declarative Vault database config ──
               # ${VAR} — shell env vars expanded at runtime by the heredoc.
               # {{ "{{username}}" }} etc. — Vault engine placeholders; Helm-escaped
-              # so they survive template rendering as literal {{ }} strings.
+              # so they survive template rendering as literal {{"{{"}}{{"}}"}} strings.
               cat > /tmp/vault-config.yaml << EOF
               secrets:
                 - type: database
