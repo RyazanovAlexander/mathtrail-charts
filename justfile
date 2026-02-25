@@ -62,6 +62,9 @@ update:
     pull_chart vault hashicorp/vault
     pull_chart external-secrets external-secrets/external-secrets
 
+    rm -f ./charts/vault-operator-*.tgz
+    helm pull oci://ghcr.io/bank-vaults/helm-charts/vault-operator --destination ./charts
+
     echo "📥 Pulling Chaos Engineering..."
     pull_chart chaos-mesh chaos-mesh/chaos-mesh
 
