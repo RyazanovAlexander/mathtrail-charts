@@ -14,9 +14,19 @@ metadata:
   name: {{ include "mathtrail-service-lib.serviceAccountName" . }}
   labels:
     {{- include "mathtrail-service-lib.labels" . | nindent 4 }}
-  {{- with $v.serviceAccount.annotations }}
+  {{- $hasAnnotations := or $v.vaultDbConfig.enabled $v.serviceAccount.annotations }}
+  {{- if $hasAnnotations }}
   annotations:
+    {{- if $v.vaultDbConfig.enabled }}
+    # Pre-install hook so the SA exists before the vault-db-config Job (weight -5)
+    # runs on fresh installs where no release resources have been created yet.
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    "helm.sh/hook-delete-policy": before-hook-creation
+    {{- end }}
+    {{- with $v.serviceAccount.annotations }}
     {{- toYaml . | nindent 4 }}
+    {{- end }}
   {{- end }}
 automountServiceAccountToken: {{ $v.serviceAccount.automount }}
 {{- end }}
