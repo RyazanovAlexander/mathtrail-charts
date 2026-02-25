@@ -85,7 +85,7 @@ dashboard:
   folder: "MathTrail"
 vaultDbConfig:
   enabled: false
-  image: "ghcr.io/bank-vaults/bank-vaults:v1.31.2"
+  image: "alpine:3.21"
   waitImage: "busybox:1.36"
   vaultAddr: "http://vault.vault.svc.cluster.local:8200"
   vaultRole: "db-admin-role"
