@@ -24,6 +24,7 @@ update:
     helm repo add redhat-cop https://redhat-cop.github.io/vault-config-operator 2>/dev/null || true
     helm repo add external-secrets https://charts.external-secrets.io 2>/dev/null || true
     helm repo add douban https://douban.github.io/charts/ 2>/dev/null || true
+    helm repo add jetstack https://charts.jetstack.io 2>/dev/null || true
 
     helm repo update
 
@@ -62,6 +63,7 @@ update:
     pull_chart vault-config-operator redhat-cop/vault-config-operator
     pull_chart vault-secrets-operator hashicorp/vault-secrets-operator
     pull_chart external-secrets external-secrets/external-secrets
+    pull_chart cert-manager jetstack/cert-manager
 
     echo "📥 Pulling Chaos Engineering..."
     pull_chart chaos-mesh chaos-mesh/chaos-mesh
