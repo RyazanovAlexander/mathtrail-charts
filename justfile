@@ -21,6 +21,7 @@ update:
     helm repo add chaos-mesh https://charts.chaos-mesh.org 2>/dev/null || true
     helm repo add ory https://k8s.ory.sh/helm/charts 2>/dev/null || true
     helm repo add hashicorp https://helm.releases.hashicorp.com 2>/dev/null || true
+    helm repo add redhat-cop https://redhat-cop.github.io/vault-config-operator 2>/dev/null || true
     helm repo add external-secrets https://charts.external-secrets.io 2>/dev/null || true
     helm repo add douban https://douban.github.io/charts/ 2>/dev/null || true
 
@@ -58,10 +59,9 @@ update:
 
     echo "📥 Pulling Security charts..."
     pull_chart vault hashicorp/vault
+    pull_chart vault-config-operator redhat-cop/vault-config-operator
+    pull_chart vault-secrets-operator hashicorp/vault-secrets-operator
     pull_chart external-secrets external-secrets/external-secrets
-
-    rm -f ./charts/vault-operator-*.tgz
-    helm pull oci://ghcr.io/bank-vaults/helm-charts/vault-operator --destination ./charts
 
     echo "📥 Pulling Chaos Engineering..."
     pull_chart chaos-mesh chaos-mesh/chaos-mesh

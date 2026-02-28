@@ -24,7 +24,7 @@ helm repo update
 | **Data** | postgresql, redis, strimzi-kafka-operator |
 | **Identity (Ory)** | kratos, hydra, keto, oathkeeper |
 | **Observability** | k6-operator, k8s-monitoring, opentelemetry-collector, pyroscope |
-| **Security** | vault, external-secrets |
+| **Security** | vault, vault-config-operator, vault-secrets-operator, external-secrets |
 | **Chaos** | chaos-mesh |
 | **Dev Tools** | telepresence-oss |
 
