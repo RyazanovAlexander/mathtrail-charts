@@ -72,24 +72,6 @@ Create the name of the service account to use.
 {{- end }}
 
 {{/*
-Dapr annotations — always injected when dapr.enabled is true.
-*/}}
-{{- define "mathtrail-service-lib.daprAnnotations" -}}
-{{- $v := include "mathtrail-service-lib.mergedValues" . | fromYaml }}
-{{- if $v.dapr.enabled }}
-dapr.io/enabled: "true"
-dapr.io/app-id: {{ $v.dapr.appId | default (include "mathtrail-service-lib.fullname" .) }}
-dapr.io/app-port: {{ $v.service.port | quote }}
-{{- with $v.dapr.appProtocol }}
-dapr.io/app-protocol: {{ . | quote }}
-{{- end }}
-{{- with $v.dapr.logLevel }}
-dapr.io/log-level: {{ . | quote }}
-{{- end }}
-{{- end }}
-{{- end }}
-
-{{/*
 Validate image configuration.
 */}}
 {{- define "mathtrail-service-lib.validateImage" -}}

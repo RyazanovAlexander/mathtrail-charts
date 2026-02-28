@@ -3,7 +3,6 @@
   mathtrail-service-lib :: _deployment.tpl
   Main Deployment with:
     - Init Container waiting for migration completion
-    - Dapr Sidecar integration
     - Mandatory probe contract (Startup/Liveness/Readiness)
     - Security Context
     - Resource Requests & Limits
@@ -35,7 +34,6 @@ spec:
   template:
     metadata:
       annotations:
-        {{- include "mathtrail-service-lib.daprAnnotations" . | nindent 8 }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

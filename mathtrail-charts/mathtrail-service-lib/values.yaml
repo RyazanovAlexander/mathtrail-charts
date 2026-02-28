@@ -51,13 +51,6 @@ service:
   port: 8080
   annotations: {}
 
-# -- Dapr Sidecar integration
-dapr:
-  enabled: true
-  appId: ""          # Defaults to fullname
-  appProtocol: ""    # http | grpc
-  logLevel: ""       # debug | info | warn | error
-
 # -- Probe contract (Startup / Liveness / Readiness)
 # If the developer does not specify paths, default values are applied.
 probes:

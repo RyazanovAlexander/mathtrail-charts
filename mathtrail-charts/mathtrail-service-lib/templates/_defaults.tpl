@@ -25,8 +25,6 @@ securityContext:
 service:
   type: ClusterIP
   port: 8080
-dapr:
-  enabled: true
 probes:
   startup:
     path: /health/startup

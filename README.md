@@ -22,7 +22,6 @@ helm repo update
 | Category | Charts |
 |----------|--------|
 | **Data** | postgresql, redis, strimzi-kafka-operator |
-| **Runtime** | dapr |
 | **Identity (Ory)** | kratos, hydra, keto, oathkeeper |
 | **Observability** | k6-operator, k8s-monitoring, opentelemetry-collector, pyroscope |
 | **Security** | vault, external-secrets |
