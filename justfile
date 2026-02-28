@@ -25,6 +25,7 @@ update:
     helm repo add external-secrets https://charts.external-secrets.io 2>/dev/null || true
     helm repo add douban https://douban.github.io/charts/ 2>/dev/null || true
     helm repo add jetstack https://charts.jetstack.io 2>/dev/null || true
+    helm repo add argo https://argoproj.github.io/argo-helm 2>/dev/null || true
 
     helm repo update
 
@@ -64,6 +65,9 @@ update:
     pull_chart vault-secrets-operator hashicorp/vault-secrets-operator
     pull_chart external-secrets external-secrets/external-secrets
     pull_chart cert-manager jetstack/cert-manager
+
+    echo "📥 Pulling GitOps..."
+    pull_chart argo-cd argo/argo-cd
 
     echo "📥 Pulling Chaos Engineering..."
     pull_chart chaos-mesh chaos-mesh/chaos-mesh
