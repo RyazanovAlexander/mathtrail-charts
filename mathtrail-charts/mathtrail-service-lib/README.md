@@ -6,7 +6,7 @@ Library Helm Chart for MathTrail microservices.
 
 ## Purpose
 
-`mathtrail-service-lib` is a "constitution" for MathTrail microservices. Instead of re-describing Deployments, Dapr annotations, migrations, and probes in every repository, we package everything into a single library chart.
+`mathtrail-service-lib` is a "constitution" for MathTrail microservices. Instead of re-describing Deployments, migrations, and probes in every repository, we package everything into a single library chart.
 
 The library **enforces a contract** that every microservice must follow:
 
@@ -15,7 +15,6 @@ The library **enforces a contract** that every microservice must follow:
 | **Infrastructure** | Migration Job → Init Container → App Container |
 | **Reliability** | Requests/Limits (mandatory) + HPA |
 | **Observability** | Startup/Liveness/Readiness probes with default paths |
-| **Dapr** | Sidecar with correct ports and annotations |
 | **Security** | `runAsNonRoot`, `readOnlyRootFilesystem`, `drop ALL capabilities` |
 | **Availability** | Default Anti-Affinity, Graceful Shutdown (preStop hook) |
 | **RBAC** | Role + RoleBinding for init-container (migration wait) |
@@ -29,14 +28,14 @@ Migration Job (Helm Hook: pre-install/pre-upgrade)
         ↓
 Init Container (kubectl wait --for=condition=complete)
         ↓
-App Container (main logic + Dapr Sidecar)
+App Container (main logic)
 ```
 
 ## Template Structure
 
 ```
 templates/
-  _helpers.tpl        # Names, labels, Dapr annotations, validation
+  _helpers.tpl        # Names, labels, validation
   _job.tpl            # Migration Job (Helm Hook)
   _deployment.tpl     # Deployment + initContainers + probes + resources
   _service.tpl        # ClusterIP Service
@@ -99,10 +98,6 @@ image:
 service:
   port: 8080
 
-dapr:
-  enabled: true
-  appId: "my-service"
-
 resources:
   requests:
     cpu: "100m"
@@ -116,7 +111,7 @@ resources:
 
 | Template | Description |
 |---|---|
-| `mathtrail-service-lib.deployment` | Deployment with Dapr, probes, resources, security, graceful shutdown |
+| `mathtrail-service-lib.deployment` | Deployment with probes, resources, security, graceful shutdown |
 | `mathtrail-service-lib.service` | ClusterIP Service |
 | `mathtrail-service-lib.serviceAccount` | ServiceAccount |
 | `mathtrail-service-lib.rbac` | Role + RoleBinding for init-container |
@@ -127,7 +122,7 @@ resources:
 ## Planned Additions
 
 - Prometheus annotations (automatic metrics scraping)
-- HashiCorp Vault / Dapr Secret Store integration
+- HashiCorp Vault integration
 - PodDisruptionBudget
 - NetworkPolicy
-- Support for sidecar containers (beyond Dapr)
+- Support for additional sidecar containers

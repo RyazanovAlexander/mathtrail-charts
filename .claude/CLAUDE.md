@@ -70,7 +70,6 @@ The `mergedValues` helper in `_defaults.tpl` is the core abstraction.
 | **Infrastructure** | Migration Job → Init Container → App Container lifecycle |
 | **Reliability** | Mandatory CPU/Memory requests & limits + optional HPA |
 | **Observability** | Startup, Liveness, Readiness probes with sensible defaults |
-| **Dapr** | Sidecar annotations, app-id, app-port, protocol |
 | **Security** | `runAsNonRoot`, `readOnlyRootFilesystem`, drop ALL capabilities |
 | **Availability** | Default pod anti-affinity, graceful shutdown (preStop hook) |
 | **RBAC** | ServiceAccount + Role for migration wait (kubectl) |
@@ -81,7 +80,7 @@ Migration Job (Helm Hook: pre-install/pre-upgrade)
        ↓
 Init Container (kubectl wait for migration Job)
        ↓
-App Container + Dapr Sidecar → Health probes → Ready → Traffic
+App Container → Health probes → Ready → Traffic
 ```
 
 ### Validation Rules (enforced via `fail()`)
@@ -185,12 +184,13 @@ securityContext:
 
 ## Secret Delivery (Platform Standard — NOT a library chart concern)
 
-Dapr Secret Store integration is implemented at the **platform level** (infra repo), not in service-lib:
-- `vault` Dapr component → KV v2 secrets (Redis passwords, API keys)
-- `vault-db` Dapr component → dynamic DB credentials
+Vault secret access is implemented at the **platform level** (infra repo), not in service-lib:
+- Services authenticate directly to Vault using Kubernetes auth (`app-reader-role`)
+- KV v2 engine → static secrets (Redis passwords, API keys)
+- Database engine → dynamic PostgreSQL credentials
 
-**Service-lib does NOT need changes.** Services consume secrets in their own code via Dapr SDK
-or Dapr HTTP API. The library chart only provides ServiceAccount + RBAC (needed for Vault K8s auth).
+**Service-lib does NOT need changes.** Services consume secrets in their own code via the Vault API.
+The library chart only provides ServiceAccount + RBAC (needed for Vault K8s auth).
 
 ## Planned Features
 

@@ -14,7 +14,6 @@ update:
 
     echo "📦 Updating Helm repositories..."
     helm repo add bitnami https://charts.bitnami.com/bitnami 2>/dev/null || true
-    helm repo add dapr https://dapr.github.io/helm-charts 2>/dev/null || true
     helm repo add strimzi https://strimzi.io/charts/ 2>/dev/null || true
     helm repo add grafana https://grafana.github.io/helm-charts 2>/dev/null || true
     helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts 2>/dev/null || true
@@ -40,7 +39,6 @@ update:
     pull_chart postgresql bitnami/postgresql
     pull_chart redis bitnami/redis
     pull_chart strimzi-kafka-operator strimzi/strimzi-kafka-operator
-    pull_chart dapr dapr/dapr
 
     echo "📥 Pulling Identity (Ory) charts..."
     pull_chart kratos ory/kratos
