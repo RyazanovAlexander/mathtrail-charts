@@ -185,11 +185,13 @@ securityContext:
 ## Secret Delivery (Platform Standard — NOT a library chart concern)
 
 Vault secret access is implemented at the **platform level** (infra repo), not in service-lib:
-- Services authenticate directly to Vault using Kubernetes auth (`app-reader-role`)
+- VSO (Vault Secrets Operator) syncs Vault secrets into K8s Secrets
+- Services consume credentials via `secretKeyRef` env vars
+- VSO triggers rolling restarts on lease renewal — no in-process refresh needed
 - KV v2 engine → static secrets (Redis passwords, API keys)
 - Database engine → dynamic PostgreSQL credentials
 
-**Service-lib does NOT need changes.** Services consume secrets in their own code via the Vault API.
+**Service-lib does NOT need changes.** Services consume secrets via K8s Secrets created by VSO.
 The library chart only provides ServiceAccount + RBAC (needed for Vault K8s auth).
 
 ## Planned Features
