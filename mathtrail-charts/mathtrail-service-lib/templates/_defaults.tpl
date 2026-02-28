@@ -106,6 +106,11 @@ vaultDbConfig:
     limits:
       cpu: "200m"
       memory: "128Mi"
+vso:
+  enabled: false
+  vaultRole: ""    # defaults to .fullname at template render time
+  dbRole: ""       # defaults to "<fullname>-role" at template render time
+  secretName: ""   # defaults to "<fullname>-db-secret" at template render time
 {{- end -}}
 
 {{/*
