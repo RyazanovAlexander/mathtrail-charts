@@ -4,8 +4,9 @@
   VaultDynamicSecret CR (secrets.hashicorp.com/v1beta1) for VSO.
   Enabled by vso.enabled=true in service values.
   VSO watches this CR and creates/rotates the DB credentials K8s Secret.
-  rolloutRestartTargets ensures pods restart when credentials rotate
-  (required for pgxpool / GORM which build DSN once at startup).
+  Set vso.rolloutRestart=true to trigger a Deployment rolling restart on
+  credential rotation (legacy fallback). Default false — services that
+  implement in-process pool rotation (DynamicPool) do not need a restart.
 =======================================================================
 */}}
 
@@ -28,8 +29,10 @@ spec:
     create: true
     labels:
       {{- include "mathtrail-service-lib.labels" . | nindent 6 }}
+  {{- if dig "vso" "rolloutRestart" false $v }}
   rolloutRestartTargets:
     - kind: Deployment
       name: {{ include "mathtrail-service-lib.fullname" . }}
+  {{- end }}
 {{- end }}
 {{- end -}}
